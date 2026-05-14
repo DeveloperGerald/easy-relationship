@@ -1,16 +1,16 @@
 import Foundation
 
 public struct GraphDraft: Sendable, Equatable {
-    public var people: [DraftPerson]
+    public var entities: [DraftEntity]
     public var relations: [DraftRelation]
 
-    public init(people: [DraftPerson], relations: [DraftRelation]) {
-        self.people = people
+    public init(entities: [DraftEntity], relations: [DraftRelation]) {
+        self.entities = entities
         self.relations = relations
     }
 }
 
-public struct DraftPerson: Sendable, Equatable {
+public struct DraftEntity: Sendable, Equatable {
     public var clientId: String
     public var name: String
     public var attributes: [String: String]

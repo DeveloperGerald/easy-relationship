@@ -14,7 +14,7 @@ public struct Group: Sendable, Equatable, Identifiable {
     }
 }
 
-public struct Person: Sendable, Equatable, Identifiable {
+public struct Entity: Sendable, Equatable, Identifiable {
     public var id: String
     public var groupId: String
     public var name: String
@@ -96,8 +96,8 @@ public struct RelationType: Sendable, Equatable, Identifiable {
 public struct Relation: Sendable, Equatable, Identifiable {
     public var id: String
     public var groupId: String
-    public var fromPersonId: String
-    public var toPersonId: String
+    public var fromEntityId: String
+    public var toEntityId: String
     public var relationTypeId: String
     public var attributes: [String: String]
     public var createdAt: Date
@@ -105,16 +105,16 @@ public struct Relation: Sendable, Equatable, Identifiable {
     public init(
         id: String,
         groupId: String,
-        fromPersonId: String,
-        toPersonId: String,
+        fromEntityId: String,
+        toEntityId: String,
         relationTypeId: String,
         attributes: [String: String],
         createdAt: Date
     ) {
         self.id = id
         self.groupId = groupId
-        self.fromPersonId = fromPersonId
-        self.toPersonId = toPersonId
+        self.fromEntityId = fromEntityId
+        self.toEntityId = toEntityId
         self.relationTypeId = relationTypeId
         self.attributes = attributes
         self.createdAt = createdAt

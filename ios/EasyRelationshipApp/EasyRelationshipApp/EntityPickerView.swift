@@ -1,22 +1,22 @@
 import SwiftUI
 import EasyRelationshipCore
 
-struct PersonPickerView: View {
+struct EntityPickerView: View {
     let title: String
-    let people: [EasyRelationshipCore.Person]
-    let onPick: (EasyRelationshipCore.Person) -> Void
+    let entities: [EasyRelationshipCore.Entity]
+    let onPick: (EasyRelationshipCore.Entity) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var query: String = ""
 
     var body: some View {
         List {
-            ForEach(filteredPeople) { person in
+            ForEach(filteredEntities) { entity in
                 Button {
-                    onPick(person)
+                    onPick(entity)
                     dismiss()
                 } label: {
-                    Text(person.name)
+                    Text(entity.name)
                 }
             }
         }
@@ -24,10 +24,10 @@ struct PersonPickerView: View {
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "搜索姓名")
     }
 
-    private var filteredPeople: [EasyRelationshipCore.Person] {
+    private var filteredEntities: [EasyRelationshipCore.Entity] {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return people }
-        return people.filter { $0.name.localizedCaseInsensitiveContains(trimmed) }
+        guard !trimmed.isEmpty else { return entities }
+        return entities.filter { $0.name.localizedCaseInsensitiveContains(trimmed) }
     }
 }
 

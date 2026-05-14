@@ -2,8 +2,8 @@ import Foundation
 import EasyRelationshipCore
 
 @MainActor
-final class PeopleStore: ObservableObject {
-    @Published private(set) var people: [EasyRelationshipCore.Person] = []
+final class EntitiesStore: ObservableObject {
+    @Published private(set) var entities: [EasyRelationshipCore.Entity] = []
     @Published private(set) var attributeDefinitions: [EasyRelationshipCore.AttributeDefinition] = []
     @Published var query: String = ""
     @Published private(set) var lastErrorMessage: String = ""
@@ -20,43 +20,43 @@ final class PeopleStore: ObservableObject {
         do {
             attributeDefinitions = try store.attributeDefinitions.list(groupId: groupId)
             if query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                people = try store.people.list(groupId: groupId)
+                entities = try store.entities.list(groupId: groupId)
             } else {
-                people = try store.people.search(groupId: groupId, nameQuery: query)
+                entities = try store.entities.search(groupId: groupId, nameQuery: query)
             }
         } catch {
             lastErrorMessage = String(describing: error)
         }
     }
 
-    func createPerson(name: String, attributes: [String: String]) {
+    func createEntity(name: String, attributes: [String: String]) {
         do {
-            _ = try store.people.create(groupId: groupId, name: name, attributes: attributes)
+            _ = try store.entities.create(groupId: groupId, name: name, attributes: attributes)
             reload()
         } catch {
             lastErrorMessage = String(describing: error)
         }
     }
 
-    func updatePerson(personId: String, name: String, attributes: [String: String]) {
+    func updateEntity(entityId: String, name: String, attributes: [String: String]) {
         do {
-            try store.people.update(personId: personId, name: name, attributes: attributes)
+            try store.entities.update(entityId: entityId, name: name, attributes: attributes)
             reload()
         } catch {
             lastErrorMessage = String(describing: error)
         }
     }
 
-    func deletePerson(personId: String) {
+    func deleteEntity(entityId: String) {
         do {
-            try store.people.delete(personId: personId)
+            try store.entities.delete(entityId: entityId)
             reload()
         } catch {
             lastErrorMessage = String(describing: error)
         }
     }
 
-    func personById(_ id: String) -> EasyRelationshipCore.Person? {
-        people.first(where: { $0.id == id })
+    func entityById(_ id: String) -> EasyRelationshipCore.Entity? {
+        entities.first(where: { $0.id == id })
     }
 }

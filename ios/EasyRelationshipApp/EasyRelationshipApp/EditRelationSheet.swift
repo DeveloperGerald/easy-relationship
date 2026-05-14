@@ -2,7 +2,7 @@ import SwiftUI
 import EasyRelationshipCore
 
 struct EditRelationSheet: View {
-    let people: [EasyRelationshipCore.Person]
+    let entities: [EasyRelationshipCore.Entity]
     let relationTypes: [EasyRelationshipCore.RelationType]
     let initialFromId: String
     let initialToId: String
@@ -10,46 +10,46 @@ struct EditRelationSheet: View {
     let onSave: (String, String, String) -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @State private var fromPerson: EasyRelationshipCore.Person? = nil
-    @State private var toPerson: EasyRelationshipCore.Person? = nil
+    @State private var fromEntity: EasyRelationshipCore.Entity? = nil
+    @State private var toEntity: EasyRelationshipCore.Entity? = nil
     @State private var selectedRelationTypeId: String = ""
 
     var body: some View {
         NavigationStack {
             Form {
-                Section("人物") {
+                Section("个体") {
                     NavigationLink {
-                        PersonPickerView(title: "选择发起方", people: people) { person in
-                            fromPerson = person
+                        EntityPickerView(title: "选择发起方", entities: entities) { entity in
+                            fromEntity = entity
                         }
                     } label: {
                         HStack {
                             Text("从")
                             Spacer()
-                            Text(fromPerson?.name ?? "未选择")
+                            Text(fromEntity?.name ?? "未选择")
                                 .foregroundStyle(.secondary)
                         }
                     }
 
                     NavigationLink {
-                        PersonPickerView(title: "选择接收方", people: people) { person in
-                            toPerson = person
+                        EntityPickerView(title: "选择接收方", entities: entities) { entity in
+                            toEntity = entity
                         }
                     } label: {
                         HStack {
                             Text("到")
                             Spacer()
-                            Text(toPerson?.name ?? "未选择")
+                            Text(toEntity?.name ?? "未选择")
                                 .foregroundStyle(.secondary)
                         }
                     }
 
                     Button("交换方向") {
-                        let tmp = fromPerson
-                        fromPerson = toPerson
-                        toPerson = tmp
+                        let tmp = fromEntity
+                        fromEntity = toEntity
+                        toEntity = tmp
                     }
-                    .disabled(fromPerson == nil && toPerson == nil)
+                    .disabled(fromEntity == nil && toEntity == nil)
                 }
 
                 Section("关系类型") {
@@ -68,9 +68,9 @@ struct EditRelationSheet: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("保存") {
-                        guard let fromPerson, let toPerson else { return }
+                        guard let fromEntity, let toEntity else { return }
                         guard !selectedRelationTypeId.isEmpty else { return }
-                        onSave(fromPerson.id, toPerson.id, selectedRelationTypeId)
+                        onSave(fromEntity.id, toEntity.id, selectedRelationTypeId)
                         dismiss()
                     }
                     .disabled(!canSave)
@@ -78,8 +78,8 @@ struct EditRelationSheet: View {
             }
         }
         .onAppear {
-            fromPerson = people.first(where: { $0.id == initialFromId })
-            toPerson = people.first(where: { $0.id == initialToId })
+            fromEntity = entities.first(where: { $0.id == initialFromId })
+            toEntity = entities.first(where: { $0.id == initialToId })
             selectedRelationTypeId = initialRelationTypeId
             if selectedRelationTypeId.isEmpty {
                 selectedRelationTypeId = relationTypes.first?.id ?? ""
@@ -88,7 +88,7 @@ struct EditRelationSheet: View {
     }
 
     private var canSave: Bool {
-        guard fromPerson != nil, toPerson != nil else { return false }
+        guard fromEntity != nil, toEntity != nil else { return false }
         guard !selectedRelationTypeId.isEmpty else { return false }
         return true
     }

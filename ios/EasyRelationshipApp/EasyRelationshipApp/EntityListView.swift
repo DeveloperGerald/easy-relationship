@@ -1,14 +1,14 @@
 import SwiftUI
 import EasyRelationshipCore
 
-struct PeopleListView: View {
-    @StateObject private var store: PeopleStore
+struct EntityListView: View {
+    @StateObject private var store: EntitiesStore
 
     @State private var isPresentingCreate: Bool = false
-    @State private var editTarget: EasyRelationshipCore.Person? = nil
-    @State private var deleteTarget: EasyRelationshipCore.Person? = nil
+    @State private var editTarget: EasyRelationshipCore.Entity? = nil
+    @State private var deleteTarget: EasyRelationshipCore.Entity? = nil
 
-    init(store: PeopleStore) {
+    init(store: EntitiesStore) {
         self._store = StateObject(wrappedValue: store)
     }
 
@@ -22,28 +22,28 @@ struct PeopleListView: View {
                 }
             }
 
-            if store.people.isEmpty {
+            if store.entities.isEmpty {
                 Section {
-                    Text(store.query.isEmpty ? "暂无人物" : "无匹配结果")
+                    Text(store.query.isEmpty ? "暂无数据" : "无匹配结果")
                         .foregroundStyle(.secondary)
                 }
             } else {
                 Section {
-                    ForEach(store.people) { person in
+                    ForEach(store.entities) { entity in
                         NavigationLink {
-                            PersonDetailView(store: store, personId: person.id)
+                            EntityDetailView(store: store, entityId: entity.id)
                         } label: {
-                            Text(person.name)
+                            Text(entity.name)
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
-                                deleteTarget = person
+                                deleteTarget = entity
                             } label: {
                                 Text("删除")
                             }
 
                             Button {
-                                editTarget = person
+                                editTarget = entity
                             } label: {
                                 Text("编辑")
                             }
@@ -52,13 +52,13 @@ struct PeopleListView: View {
                     }
                     .onDelete { indexSet in
                         for index in indexSet {
-                            deleteTarget = store.people[index]
+                            deleteTarget = store.entities[index]
                         }
                     }
                 }
             }
         }
-        .navigationTitle("人物")
+        .navigationTitle("个体")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -77,25 +77,25 @@ struct PeopleListView: View {
             store.reload()
         }
         .sheet(isPresented: $isPresentingCreate) {
-            PersonEditorSheet(
+            EntityEditorSheet(
                 mode: .create,
                 attributeDefinitions: store.attributeDefinitions
             ) { name, attributes in
-                store.createPerson(name: name, attributes: attributes)
+                store.createEntity(name: name, attributes: attributes)
             }
         }
-        .sheet(item: $editTarget) { person in
-            PersonEditorSheet(
-                mode: .edit(personId: person.id),
+        .sheet(item: $editTarget) { entity in
+            EntityEditorSheet(
+                mode: .edit(entityId: entity.id),
                 attributeDefinitions: store.attributeDefinitions,
-                initialName: person.name,
-                initialAttributes: person.attributes
+                initialName: entity.name,
+                initialAttributes: entity.attributes
             ) { name, attributes in
-                store.updatePerson(personId: person.id, name: name, attributes: attributes)
+                store.updateEntity(entityId: entity.id, name: name, attributes: attributes)
             }
         }
         .confirmationDialog(
-            "删除人物？",
+            "删除个体？",
             isPresented: Binding(
                 get: { deleteTarget != nil },
                 set: { if !$0 { deleteTarget = nil } }
@@ -103,8 +103,8 @@ struct PeopleListView: View {
             titleVisibility: .visible
         ) {
             Button("删除", role: .destructive) {
-                if let person = deleteTarget {
-                    store.deletePerson(personId: person.id)
+                if let entity = deleteTarget {
+                    store.deleteEntity(entityId: entity.id)
                 }
                 deleteTarget = nil
             }
@@ -113,7 +113,7 @@ struct PeopleListView: View {
                 deleteTarget = nil
             }
         } message: {
-            Text("删除后，与该人物相关的关系也会被删除。")
+            Text("删除后，与该个体相关的关系也会被删除。")
         }
     }
 }

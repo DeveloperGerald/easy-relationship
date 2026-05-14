@@ -12,8 +12,8 @@ final class AppStore: ObservableObject {
         self.store = try LocalStore(fileURL: databaseURL)
     }
 
-    func makePeopleStore(groupId: String) -> PeopleStore {
-        PeopleStore(store: store, groupId: groupId)
+    func makeEntitiesStore(groupId: String) -> EntitiesStore {
+        EntitiesStore(store: store, groupId: groupId)
     }
 
     func makeAttributeDefinitionsStore(groupId: String) -> AttributeDefinitionsStore {
@@ -83,7 +83,7 @@ final class AppStore: ObservableObject {
         }
     }
 
-    func generateStressData(groupId: String, peopleCount: Int) {
+    func generateStressData(groupId: String, entityCount: Int) {
         do {
             try store.database.inTransaction {
                 let types = try store.relationTypes.list(groupId: groupId)
@@ -94,33 +94,33 @@ final class AppStore: ObservableObject {
                     relationTypeId = try store.relationTypes.create(groupId: groupId, name: "关联", directional: false).id
                 }
 
-                var peopleIds: [String] = []
-                peopleIds.reserveCapacity(peopleCount)
-                for i in 1...peopleCount {
-                    let name = String(format: "P%03d", i)
-                    let person = try store.people.create(groupId: groupId, name: name, attributes: [:])
-                    peopleIds.append(person.id)
+                var entityIds: [String] = []
+                entityIds.reserveCapacity(entityCount)
+                for i in 1...entityCount {
+                    let name = String(format: "E%03d", i)
+                    let entity = try store.entities.create(groupId: groupId, name: name, attributes: [:])
+                    entityIds.append(entity.id)
                 }
 
-                if peopleIds.count >= 2 {
-                    for i in 0..<peopleIds.count {
-                        let fromId = peopleIds[i]
-                        let toId = peopleIds[(i + 1) % peopleIds.count]
+                if entityIds.count >= 2 {
+                    for i in 0..<entityIds.count {
+                        let fromId = entityIds[i]
+                        let toId = entityIds[(i + 1) % entityIds.count]
                         _ = try store.relations.create(
                             groupId: groupId,
-                            fromPersonId: fromId,
-                            toPersonId: toId,
+                            fromEntityId: fromId,
+                            toEntityId: toId,
                             relationTypeId: relationTypeId
                         )
                     }
 
-                    for i in 0..<peopleIds.count {
-                        let fromId = peopleIds[i]
-                        let toId = peopleIds[(i + 7) % peopleIds.count]
+                    for i in 0..<entityIds.count {
+                        let fromId = entityIds[i]
+                        let toId = entityIds[(i + 7) % entityIds.count]
                         _ = try store.relations.create(
                             groupId: groupId,
-                            fromPersonId: fromId,
-                            toPersonId: toId,
+                            fromEntityId: fromId,
+                            toEntityId: toId,
                             relationTypeId: relationTypeId
                         )
                     }

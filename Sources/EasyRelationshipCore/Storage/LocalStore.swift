@@ -3,7 +3,7 @@ import Foundation
 public final class LocalStore: @unchecked Sendable {
     public let database: SQLiteDatabase
     public let groups: GroupRepository
-    public let people: PersonRepository
+    public let entities: EntityRepository
     public let relationTypes: RelationTypeRepository
     public let relations: RelationRepository
     public let attributeDefinitions: AttributeDefinitionRepository
@@ -16,7 +16,7 @@ public final class LocalStore: @unchecked Sendable {
 
         self.database = database
         self.groups = GroupRepository(database: database)
-        self.people = PersonRepository(database: database)
+        self.entities = EntityRepository(database: database)
         self.relationTypes = RelationTypeRepository(database: database)
         self.relations = RelationRepository(database: database)
         self.attributeDefinitions = AttributeDefinitionRepository(database: database)

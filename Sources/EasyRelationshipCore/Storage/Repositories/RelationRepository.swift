@@ -9,8 +9,8 @@ public struct RelationRepository: Sendable {
 
     public func create(
         groupId: String,
-        fromPersonId: String,
-        toPersonId: String,
+        fromEntityId: String,
+        toEntityId: String,
         relationTypeId: String,
         attributes: [String: String] = [:],
         now: Date = Date()
@@ -20,12 +20,12 @@ public struct RelationRepository: Sendable {
         let attributesJSON = try SQLiteJSON.encodeDictionary(attributes)
 
         try database.withStatement(
-            "INSERT INTO relations(id, group_id, from_person_id, to_person_id, relation_type_id, attributes_json, created_at) VALUES(?, ?, ?, ?, ?, ?, ?);"
+            "INSERT INTO relations(id, group_id, from_entity_id, to_entity_id, relation_type_id, attributes_json, created_at) VALUES(?, ?, ?, ?, ?, ?, ?);"
         ) { statement in
             statement.bindText(id, index: 1)
             statement.bindText(groupId, index: 2)
-            statement.bindText(fromPersonId, index: 3)
-            statement.bindText(toPersonId, index: 4)
+            statement.bindText(fromEntityId, index: 3)
+            statement.bindText(toEntityId, index: 4)
             statement.bindText(relationTypeId, index: 5)
             statement.bindText(attributesJSON, index: 6)
             statement.bindInt64(Int64(createdAt.timeIntervalSince1970), index: 7)
@@ -38,8 +38,8 @@ public struct RelationRepository: Sendable {
         return Relation(
             id: id,
             groupId: groupId,
-            fromPersonId: fromPersonId,
-            toPersonId: toPersonId,
+            fromEntityId: fromEntityId,
+            toEntityId: toEntityId,
             relationTypeId: relationTypeId,
             attributes: attributes,
             createdAt: createdAt
@@ -48,15 +48,15 @@ public struct RelationRepository: Sendable {
 
     public func list(groupId: String) throws -> [Relation] {
         try database.withStatement(
-            "SELECT id, group_id, from_person_id, to_person_id, relation_type_id, attributes_json, created_at FROM relations WHERE group_id = ? ORDER BY created_at DESC;"
+            "SELECT id, group_id, from_entity_id, to_entity_id, relation_type_id, attributes_json, created_at FROM relations WHERE group_id = ? ORDER BY created_at DESC;"
         ) { statement in
             statement.bindText(groupId, index: 1)
             var result: [Relation] = []
             while statement.step() == SQLiteStatement.row {
                 let id = statement.columnText(0) ?? ""
                 let groupId = statement.columnText(1) ?? ""
-                let fromPersonId = statement.columnText(2) ?? ""
-                let toPersonId = statement.columnText(3) ?? ""
+                let fromEntityId = statement.columnText(2) ?? ""
+                let toEntityId = statement.columnText(3) ?? ""
                 let relationTypeId = statement.columnText(4) ?? ""
                 let attributesJSON = statement.columnText(5) ?? "{}"
                 let createdAt = Date(timeIntervalSince1970: TimeInterval(statement.columnInt64(6)))
@@ -65,8 +65,8 @@ public struct RelationRepository: Sendable {
                     Relation(
                         id: id,
                         groupId: groupId,
-                        fromPersonId: fromPersonId,
-                        toPersonId: toPersonId,
+                        fromEntityId: fromEntityId,
+                        toEntityId: toEntityId,
                         relationTypeId: relationTypeId,
                         attributes: attributes,
                         createdAt: createdAt
@@ -90,18 +90,18 @@ public struct RelationRepository: Sendable {
     public func update(
         relationId: String,
         groupId: String,
-        fromPersonId: String,
-        toPersonId: String,
+        fromEntityId: String,
+        toEntityId: String,
         relationTypeId: String,
         attributes: [String: String] = [:]
     ) throws {
         let attributesJSON = try SQLiteJSON.encodeDictionary(attributes)
         try database.withStatement(
-            "UPDATE relations SET group_id = ?, from_person_id = ?, to_person_id = ?, relation_type_id = ?, attributes_json = ? WHERE id = ?;"
+            "UPDATE relations SET group_id = ?, from_entity_id = ?, to_entity_id = ?, relation_type_id = ?, attributes_json = ? WHERE id = ?;"
         ) { statement in
             statement.bindText(groupId, index: 1)
-            statement.bindText(fromPersonId, index: 2)
-            statement.bindText(toPersonId, index: 3)
+            statement.bindText(fromEntityId, index: 2)
+            statement.bindText(toEntityId, index: 3)
             statement.bindText(relationTypeId, index: 4)
             statement.bindText(attributesJSON, index: 5)
             statement.bindText(relationId, index: 6)

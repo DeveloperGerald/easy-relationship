@@ -127,7 +127,7 @@ struct AppRootView: View {
                     deleteTarget = nil
                 }
             } message: {
-                Text("删除后，该群体下的人物与关系也会一并删除。")
+                Text("删除后，该群体下的个体与关系也会一并删除。")
             }
         }
     }

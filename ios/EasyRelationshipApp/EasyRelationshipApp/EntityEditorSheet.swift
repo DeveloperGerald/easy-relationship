@@ -1,10 +1,10 @@
 import SwiftUI
 import EasyRelationshipCore
 
-struct PersonEditorSheet: View {
+struct EntityEditorSheet: View {
     enum Mode {
         case create
-        case edit(personId: String)
+        case edit(entityId: String)
     }
 
     let mode: Mode
@@ -44,8 +44,8 @@ struct PersonEditorSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("姓名") {
-                    TextField("请输入姓名", text: $name)
+                Section("名称") {
+                    TextField("请输入名称", text: $name)
                         .textInputAutocapitalization(.never)
                 }
 
@@ -82,9 +82,9 @@ struct PersonEditorSheet: View {
     private var title: String {
         switch mode {
         case .create:
-            return "新增人物"
+            return "新增个体"
         case .edit:
-            return "编辑人物"
+            return "编辑个体"
         }
     }
 

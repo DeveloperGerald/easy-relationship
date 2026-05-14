@@ -9,7 +9,7 @@ public struct ExportService: Sendable {
 
     public func exportGroupJSON(groupId: String) throws -> Data {
         let group = try fetchGroup(groupId: groupId)
-        let people = try PersonRepository(database: database).list(groupId: groupId)
+        let entities = try EntityRepository(database: database).list(groupId: groupId)
         let attributeDefinitions = try AttributeDefinitionRepository(database: database).list(groupId: groupId)
         let relationTypes = try RelationTypeRepository(database: database).list(groupId: groupId)
         let relations = try RelationRepository(database: database).list(groupId: groupId)
@@ -33,7 +33,7 @@ public struct ExportService: Sendable {
                     "sortOrder": $0.sortOrder
                 ]
             },
-            "people": people.map {
+            "entities": entities.map {
                 [
                     "id": $0.id,
                     "groupId": $0.groupId,
@@ -56,8 +56,8 @@ public struct ExportService: Sendable {
                 [
                     "id": $0.id,
                     "groupId": $0.groupId,
-                    "fromPersonId": $0.fromPersonId,
-                    "toPersonId": $0.toPersonId,
+                    "fromEntityId": $0.fromEntityId,
+                    "toEntityId": $0.toEntityId,
                     "relationTypeId": $0.relationTypeId,
                     "attributes": $0.attributes,
                     "createdAt": Int64($0.createdAt.timeIntervalSince1970)

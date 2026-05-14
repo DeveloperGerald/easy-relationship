@@ -12,8 +12,8 @@ struct GroupDetailView: View {
     var body: some View {
         List {
             Section("入口") {
-                NavigationLink("人物") {
-                    PeopleListView(store: appStore.makePeopleStore(groupId: group.id))
+                NavigationLink("个体") {
+                    EntityListView(store: appStore.makeEntitiesStore(groupId: group.id))
                 }
 
                 NavigationLink("关系图") {
@@ -34,7 +34,7 @@ struct GroupDetailView: View {
             }
 
             Section("测试") {
-                Button(isGeneratingStressData ? "生成中..." : "生成 100 人测试数据") {
+                Button(isGeneratingStressData ? "生成中..." : "生成 100 个体测试数据") {
                     isPresentingGenerateConfirm = true
                 }
                 .disabled(isGeneratingStressData)
@@ -58,7 +58,7 @@ struct GroupDetailView: View {
             }
             Button("取消", role: .cancel) {}
         } message: {
-            Text("会在当前群体中追加 100 个人物与多条关系，建议只用于性能测试。")
+            Text("会在当前群体中追加 100 个个体与多条关系，建议只用于性能测试。")
         }
     }
 
@@ -66,10 +66,10 @@ struct GroupDetailView: View {
         isGeneratingStressData = true
         lastMessage = ""
         Task {
-            appStore.generateStressData(groupId: group.id, peopleCount: 100)
+            appStore.generateStressData(groupId: group.id, entityCount: 100)
             isGeneratingStressData = false
             if appStore.lastErrorMessage.isEmpty {
-                lastMessage = "已生成 100 人测试数据"
+                lastMessage = "已生成 100 个体测试数据"
             } else {
                 lastMessage = "生成失败：\(appStore.lastErrorMessage)"
             }

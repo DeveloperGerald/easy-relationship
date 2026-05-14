@@ -19,10 +19,10 @@ do {
         sortOrder: 0
     )
 
-    let alice = try store.people.create(groupId: group.id, name: "Alice", attributes: ["role": "老板"])
-    let bob = try store.people.create(groupId: group.id, name: "Bob", attributes: ["role": "员工"])
+    let alice = try store.entities.create(groupId: group.id, name: "Alice", attributes: ["role": "老板"])
+    let bob = try store.entities.create(groupId: group.id, name: "Bob", attributes: ["role": "员工"])
     let type = try store.relationTypes.create(groupId: group.id, name: "同事", directional: false)
-    _ = try store.relations.create(groupId: group.id, fromPersonId: alice.id, toPersonId: bob.id, relationTypeId: type.id)
+    _ = try store.relations.create(groupId: group.id, fromEntityId: alice.id, toEntityId: bob.id, relationTypeId: type.id)
 
     let exported = try store.exports.exportGroupJSON(groupId: group.id)
     let json = String(decoding: exported, as: UTF8.self)

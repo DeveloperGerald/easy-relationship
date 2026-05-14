@@ -1,21 +1,21 @@
 import SwiftUI
 import EasyRelationshipCore
 
-struct PersonDetailView: View {
-    @ObservedObject var store: PeopleStore
-    let personId: String
+struct EntityDetailView: View {
+    @ObservedObject var store: EntitiesStore
+    let entityId: String
 
     @State private var isPresentingEdit: Bool = false
 
     var body: some View {
         Group {
-            if let person = store.personById(personId) {
+            if let entity = store.entityById(entityId) {
                 List {
                     Section("基础") {
                         HStack {
                             Text("姓名")
                             Spacer()
-                            Text(person.name)
+                            Text(entity.name)
                                 .foregroundStyle(.secondary)
                         }
                     }
@@ -29,7 +29,7 @@ struct PersonDetailView: View {
                                 HStack {
                                     Text(definition.label)
                                     Spacer()
-                                    Text(displayValue(for: definition, person: person))
+                                    Text(displayValue(for: definition, entity: entity))
                                         .foregroundStyle(.secondary)
                                         .lineLimit(1)
                                 }
@@ -37,7 +37,7 @@ struct PersonDetailView: View {
                         }
                     }
                 }
-                .navigationTitle(person.name)
+                .navigationTitle(entity.name)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button("编辑") {
@@ -46,24 +46,24 @@ struct PersonDetailView: View {
                     }
                 }
                 .sheet(isPresented: $isPresentingEdit) {
-                    PersonEditorSheet(
-                        mode: .edit(personId: person.id),
+                    EntityEditorSheet(
+                        mode: .edit(entityId: entity.id),
                         attributeDefinitions: store.attributeDefinitions,
-                        initialName: person.name,
-                        initialAttributes: person.attributes
+                        initialName: entity.name,
+                        initialAttributes: entity.attributes
                     ) { name, attributes in
-                        store.updatePerson(personId: person.id, name: name, attributes: attributes)
+                        store.updateEntity(entityId: entity.id, name: name, attributes: attributes)
                     }
                 }
             } else {
-                ContentUnavailableView("人物不存在", systemImage: "person.fill.xmark")
+                ContentUnavailableView("数据不存在", systemImage: "person.fill.xmark")
                     .onAppear { store.reload() }
             }
         }
     }
 
-    private func displayValue(for definition: EasyRelationshipCore.AttributeDefinition, person: EasyRelationshipCore.Person) -> String {
-        let raw = person.attributes[definition.key] ?? ""
+    private func displayValue(for definition: EasyRelationshipCore.AttributeDefinition, entity: EasyRelationshipCore.Entity) -> String {
+        let raw = entity.attributes[definition.key] ?? ""
         if raw.isEmpty {
             return "—"
         }

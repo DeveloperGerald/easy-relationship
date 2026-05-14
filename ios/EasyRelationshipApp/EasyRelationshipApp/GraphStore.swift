@@ -28,7 +28,7 @@ final class GraphStore: ObservableObject {
 
     private let store: LocalStore
     private let groupId: String
-    private var peopleById: [String: EasyRelationshipCore.Person] = [:]
+    private var entitiesById: [String: EasyRelationshipCore.Entity] = [:]
     private var adjacency: [String: Set<String>] = [:]
 
     init(store: LocalStore, groupId: String) {
@@ -38,16 +38,16 @@ final class GraphStore: ObservableObject {
 
     func reload() {
         do {
-            let people = try store.people.list(groupId: groupId)
+            let entities = try store.entities.list(groupId: groupId)
             let relationTypes = try store.relationTypes.list(groupId: groupId)
             let relations = try store.relations.list(groupId: groupId)
 
             let savedLayout = try store.graphLayouts.load(groupId: groupId)
 
-            peopleById = Dictionary(uniqueKeysWithValues: people.map { ($0.id, $0) })
+            entitiesById = Dictionary(uniqueKeysWithValues: entities.map { ($0.id, $0) })
             let relationTypeById = Dictionary(uniqueKeysWithValues: relationTypes.map { ($0.id, $0) })
 
-            nodes = people
+            nodes = entities
                 .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
                 .map { GraphNode(id: $0.id, name: $0.name) }
 
@@ -55,8 +55,8 @@ final class GraphStore: ObservableObject {
                 let type = relationTypeById[relation.relationTypeId]
                 return GraphEdge(
                     id: relation.id,
-                    fromId: relation.fromPersonId,
-                    toId: relation.toPersonId,
+                    fromId: relation.fromEntityId,
+                    toId: relation.toEntityId,
                     relationTypeId: relation.relationTypeId,
                     label: type?.name ?? "(未知类型)",
                     directional: type?.directional ?? false

@@ -70,24 +70,24 @@ struct RelationsView: View {
                 } label: {
                     Image(systemName: "plus")
                 }
-                .disabled(store.people.isEmpty || store.relationTypes.isEmpty)
+                .disabled(store.entities.isEmpty || store.relationTypes.isEmpty)
             }
         }
         .onAppear { store.reload() }
         .sheet(isPresented: $isPresentingCreate) {
-            NewRelationSheet(people: store.people, relationTypes: store.relationTypes) { fromId, toId, typeId in
-                store.create(fromPersonId: fromId, toPersonId: toId, relationTypeId: typeId)
+            NewRelationSheet(entities: store.entities, relationTypes: store.relationTypes) { fromId, toId, typeId in
+                store.create(fromEntityId: fromId, toEntityId: toId, relationTypeId: typeId)
             }
         }
         .sheet(item: $editTarget) { item in
             EditRelationSheet(
-                people: store.people,
+                entities: store.entities,
                 relationTypes: store.relationTypes,
                 initialFromId: item.fromId,
                 initialToId: item.toId,
                 initialRelationTypeId: item.relationTypeId
             ) { fromId, toId, typeId in
-                store.update(relationId: item.id, fromPersonId: fromId, toPersonId: toId, relationTypeId: typeId)
+                store.update(relationId: item.id, fromEntityId: fromId, toEntityId: toId, relationTypeId: typeId)
             }
         }
         .confirmationDialog(
