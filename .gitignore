@@ -1,0 +1,13 @@
+.DS_Store
+.swiftpm
+.build
+DerivedData
+xcuserdata
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+Pods
+Carthage
+*.ipa
+*.dSYM
+*.dSYM.zip
